@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif: Evaluasi Peradaban Islam di Dunia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* bg-gray-100 */
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+        
+        .fade-out {
+            animation: fadeOut 0.3s ease-in forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-10px); }
+        }
+
+        .option-btn {
+            transition: all 0.2s ease;
+        }
+        
+        .option-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        /* Custom scrollbar for summary */
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+            border-radius: 4px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-emerald-800 to-teal-900">
+
+    <div id="app-container" class="w-full max-w-3xl bg-white rounded-2xl shadow-2xl overflow-hidden relative min-h-[500px] flex flex-col">
+        
+        <!-- Header -->
+        <div class="bg-emerald-600 text-white p-6 text-center shadow-md relative z-10">
+            <h1 class="text-2xl md:text-3xl font-bold tracking-wide">Evaluasi PAI Kelas XII</h1>
+            <p class="text-emerald-100 mt-2 text-sm md:text-base">Sejarah Peradaban Islam di Dunia</p>
+        </div>
+
+        <!-- MAIN CONTENT AREA -->
+        <div id="content-area" class="flex-grow p-6 md:p-8 flex flex-col justify-center items-center">
+            
+            <!-- Start Screen -->
+            <div id="start-screen" class="w-full text-center fade-in">
+                <div class="w-24 h-24 mx-auto bg-emerald-100 rounded-full flex items-center justify-center mb-6 shadow-inner">
+                    <svg class="w-12 h-12 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                </div>
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Uji Pemahamanmu!</h2>
+                <p class="text-gray-600 mb-8 max-w-md mx-auto">Kuis ini terdiri dari 20 pertanyaan pilihan ganda yang dirancang untuk mengevaluasi pengetahuan Anda tentang perkembangan Islam di Asia, Eropa, Amerika, Afrika, dan Australia.</p>
+                <button onclick="startQuiz()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-emerald-300">
+                    Mulai Kuis Sekarang
+                </button>
+            </div>
+
+            <!-- Quiz Screen -->
+            <div id="quiz-screen" class="w-full hidden">
+                <!-- Progress -->
+                <div class="mb-6">
+                    <div class="flex justify-between text-sm font-medium text-gray-500 mb-2">
+                        <span id="question-counter">Soal 1 dari 20</span>
+                        <span id="score-counter">Skor: 0</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                        <div id="progress-bar" class="bg-emerald-600 h-2.5 rounded-full transition-all duration-300 ease-out" style="width: 5%"></div>
+                    </div>
+                </div>
+
+                <!-- Question -->
+                <div class="mb-8">
+                    <h3 id="question-text" class="text-lg md:text-xl font-semibold text-gray-800 leading-relaxed">
+                        Pertanyaan akan muncul di sini...
+                    </h3>
+                </div>
+
+                <!-- Options -->
+                <div id="options-container" class="space-y-3">
+                    <!-- Buttons generated by JS -->
+                </div>
+
+                <!-- Feedback & Next Button -->
+                <div id="action-container" class="mt-8 flex justify-between items-center hidden">
+                    <div id="feedback-message" class="font-semibold text-lg flex items-center">
+                        <!-- JS injects correct/incorrect message -->
+                    </div>
+                    <button id="next-btn" onclick="nextQuestion()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg shadow transition duration-200 focus:outline-none">
+                        Selanjutnya &rarr;
+                    </button>
+                </div>
+            </div>
+
+            <!-- Result Screen -->
+            <div id="result-screen" class="w-full hidden flex-col items-center">
+                <div id="result-icon" class="w-20 h-20 rounded-full flex items-center justify-center mb-4 shadow-lg text-white">
+                    <!-- Icon injected by JS -->
+                </div>
+                <h2 class="text-3xl font-bold text-gray-800 mb-2">Kuis Selesai!</h2>
+                <p id="final-score" class="text-5xl font-extrabold text-emerald-600 mb-2">100</p>
+                <p class="text-gray-500 mb-6 text-center" id="score-message">Luar biasa! Anda menguasai materi dengan sangat baik.</p>
+                
+                <div class="w-full max-w-2xl bg-gray-50 rounded-xl p-4 border border-gray-200 mb-6 h-64 overflow-y-auto custom-scroll text-left">
+                    <h4 class="font-bold text-gray-700 mb-3 sticky top-0 bg-gray-50 pb-2 border-b">Ringkasan Jawaban:</h4>
+                    <ul id="summary-list" class="space-y-4 text-sm">
+                        <!-- Summary injected by JS -->
+                    </ul>
+                </div>
+
+                <button onclick="resetQuiz()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-300 focus:outline-none">
+                    Ulangi Kuis
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Data Soal (20 Soal)
+        const quizData = [
+            {
+                question: "Menurut catatan sejarah, jalur utama yang menjadi kunci masuknya agama Islam pada abad ke-7 Masehi di berbagai wilayah benua Asia adalah...",
+                options: ["Jalur penaklukan militer.", "Jalur perdagangan rempah dan sutra.", "Jalur ekspedisi maritim Spanyol.", "Jalur pelayaran bangsa Viking."],
+                correct: 1
+            },
+            {
+                question: "Pada abad ke-16, Dinasti Safawi membawa pengaruh besar bagi peradaban Islam di Persia. Salah satu kontribusi dan ciri khas utama dinasti ini adalah...",
+                options: ["Membangun sistem perbankan modern.", "Menemukan benua Amerika.", "Menjadikan aliran Syi'ah sebagai ajaran resmi negara.", "Menyatukan seluruh Eropa di bawah Islam."],
+                correct: 2
+            },
+            {
+                question: "Tokoh cendekiawan muslim dari Al-Andalusia (Spanyol) yang sangat memengaruhi tradisi pemikiran filsafat dan keilmuan di seluruh Eropa adalah...",
+                options: ["Ibn Rusyd.", "Al-Khawarizmi.", "Al-Ghazali.", "Ibnu Khaldun."],
+                correct: 0
+            },
+            {
+                question: "Kehadiran awal agama Islam di wilayah benua Amerika bagian utara, khususnya Amerika Serikat, pada awalnya terjadi melalui peran kelompok...",
+                options: ["Pedagang Tiongkok.", "Misionaris Eropa.", "Penjelajah Spanyol.", "Para budak asal Afrika Barat pada masa era perdagangan budak."],
+                correct: 3
+            },
+            {
+                question: "Di Benua Afrika, kota Fes dan Marakesh tumbuh secara pesat menjadi salah satu pusat ilmu dan kebudayaan Islam. Kedua kota bersejarah ini berlokasi di negara...",
+                options: ["Mesir.", "Maroko.", "Mali.", "Afrika Selatan."],
+                correct: 1
+            },
+            {
+                question: "Cendekiawan muslim Al-Farabi menyumbangkan sebuah karya fenomenal yang berjudul 'Al-Madina al-Fadila'. Gagasan utama dalam mahakarya tersebut berfokus pada...",
+                options: ["Tata cara ibadah haji.", "Konsep ideal sebuah kota yang berjalan berlandaskan keadilan.", "Sistem pertanian modern di lahan kering.", "Strategi perang laut dan perkapalan."],
+                correct: 1
+            },
+            {
+                question: "Istana megah Topkapi yang menjadi simbol kekayaan budaya Islam di wilayah transkontinental pada zaman dahulu difungsikan sebagai...",
+                options: ["Pusat pemerintahan tertinggi bagi wilayah Kekaisaran Usmaniyah.", "Universitas Islam pertama di Eropa.", "Makam raja-raja Mughal yang disucikan.", "Observatorium bintang terbesar di dunia."],
+                correct: 0
+            },
+            {
+                question: "Di kawasan Amerika Selatan, masuknya ajaran Islam ke dalam budaya negara Brasil sangat berkaitan dengan migrasi historis dari kelompok...",
+                options: ["Pengungsi dari konflik di Timur Tengah.", "Transmigrasi budak-budak muslim yang diangkut dari benua Afrika Barat.", "Pasukan militer Kekaisaran Ottoman.", "Pedagang sutra dari pedalaman India."],
+                correct: 1
+            },
+            {
+                question: "Sebuah kota kuno di benua Afrika hingga kini sangat masyhur dengan Universitas kuno dan Masjid Sankore. Nama kota bersejarah di negara Mali tersebut adalah...",
+                options: ["Kairo.", "Timbuktu.", "Aljir.", "Tunis."],
+                correct: 1
+            },
+            {
+                question: "Faktor kebangkitan ekonomi peradaban Islam kuno memicu penemuan konsep-konsep sistem keuangan. Di Eropa, perbankan modern terinspirasi dari kontrak bagi hasil yang disebut...",
+                options: ["Wakaf.", "Murabahah.", "Mudarabah.", "Zakat."],
+                correct: 2
+            },
+            {
+                question: "Penjelajah tersohor asal benua Afrika yang berhasil melakukan perjalanan panjang di abad ke-14 dan mencatat keragaman kebudayaan peradaban Islam di wilayah penjuru benua adalah...",
+                options: ["Al-Idrisi.", "Ibnu Sina.", "Ibnu Khaldun.", "Ibn Battuta."],
+                correct: 3
+            },
+            {
+                question: "Perkembangan komunitas Islam di benua Australia salah satunya bermula dari kedatangan para penduduk migran pada awal abad ke-20 dari wilayah asal negara...",
+                options: ["Libanon.", "Turki.", "Indonesia.", "Arab Saudi."],
+                correct: 0
+            },
+            {
+                question: "Faktor dominan yang mendorong masuknya dan bertahannya komunitas agama Islam di negara benua Amerika bagian utara seperti Amerika Serikat di zaman modern adalah karena...",
+                options: ["Penguasaan struktur politik lokal oleh umat Islam.", "Adanya perlindungan dan pengakuan kebebasan beragama oleh hukum konstitusi yang sah.", "Bantuan dana besar-besaran dari negara-negara Arab.", "Isolasi komunitas muslim dari pergaulan masyarakat umum."],
+                correct: 1
+            },
+            {
+                question: "Bangunan bersejarah megah di Asia Tengah yang merupakan makam bagi Timur Lenk dan memiliki peran sebagai inspirasi struktur arsitektur Taj Mahal adalah...",
+                options: ["Makam Gur-e Amir.", "Masjid Sultan Ahmed.", "Istana Alhambra.", "Masjid Raya Samarra."],
+                correct: 0
+            },
+            {
+                question: "Tantangan eksternal terbesar dalam sejarah yang telah menghambat stabilitas perkembangan masyarakat muslim di mayoritas negara Asia dan Afrika adalah gerakan...",
+                options: ["Kolonialisme dan imperialisme bersenjata yang dilancarkan oleh aliansi kerajaan kekuatan Eropa.", "Perang saudara internal antar penganut mazhab umat Islam.", "Bencana alam dan krisis iklim berkepanjangan.", "Wabah penyakit menular yang mengurangi populasi secara drastis."],
+                correct: 0
+            },
+            {
+                question: "Ulama yang mendedikasikan usahanya sebagai pengasuh senior Masjid Lakemba dan menjadi pejuang hak kelompok umat Muslim minoritas di negara Australia adalah...",
+                options: ["Tariq Ramadan.", "Yusuf al-Qaradawi.", "Sheikh Taj El-Din Al-Hilaly.", "Hamza Yusuf."],
+                correct: 2
+            },
+            {
+                question: "Pertumbuhan ilmu kedokteran medis modern di wilayah Eropa Barat tidak terlepas dari penerjemahan ensiklopedia medis peninggalan ulama dan intelektual muslim dunia yang bernama...",
+                options: ["Al-Razi.", "Al-Kindi.", "Al-Battani.", "Umar Khayyam."],
+                correct: 0
+            },
+            {
+                question: "Seorang murid SMA ingin meneladani peran moderasi dalam bertoleransi beragama saat meninjau kebudayaan asing. Penerapan profil pelajar Pancasila paling sesuai adalah...",
+                options: ["Meniru semua budaya asing secara membabi buta agar dianggap modern.", "Menghargai tradisi dari keragaman budaya daerah lokal secara tulus selama rutinitas itu tidak merusak akidah.", "Menolak keras semua bentuk kebudayaan baru dan menutup diri dari pergaulan luar.", "Menghina dan meremehkan kepercayaan pemeluk agama lain."],
+                correct: 1
+            },
+            {
+                question: "Penyebaran peninggalan peradaban Islam berhasil memantik pembangunan bidang ilmu arsitektur yang simetris di wilayah Afrika, yang dibuktikan lewat bentuk peninggalan bangunan...",
+                options: ["Masjid Cordoba.", "Masjid Nabawi.", "Masjid Besar Djinguereber.", "Monumen Taj Mahal."],
+                correct: 2
+            },
+            {
+                question: "Tokoh penggerak hak-hak asasi sipil legendaris di tanah Amerika yang secara berani membela kaum minoritas Afro-Amerika pasca ia memeluk hidayah di tanah suci adalah...",
+                options: ["Martin Luther King Jr.", "Malcolm X.", "Muhammad Ali.", "Nelson Mandela."],
+                correct: 1
+            }
+        ];
+
+        // State Variables
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let userAnswers = []; // store objects { q: text, userAns: text, correctAns: text, isCorrect: bool }
+
+        // DOM Elements
+        const startScreen = document.getElementById('start-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultScreen = document.getElementById('result-screen');
+        
+        const questionCounterEl = document.getElementById('question-counter');
+        const scoreCounterEl = document.getElementById('score-counter');
+        const progressBarEl = document.getElementById('progress-bar');
+        const questionTextEl = document.getElementById('question-text');
+        const optionsContainerEl = document.getElementById('options-container');
+        const actionContainerEl = document.getElementById('action-container');
+        const feedbackMessageEl = document.getElementById('feedback-message');
+        const nextBtnEl = document.getElementById('next-btn');
+
+        function startQuiz() {
+            // Reset state
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers = [];
+            
+            // UI Transition
+            transitionScreens(startScreen, quizScreen, () => {
+                loadQuestion();
+            });
+        }
+
+        function loadQuestion() {
+            const currentQData = quizData[currentQuestionIndex];
+            
+            // Update Headers
+            questionCounterEl.textContent = `Soal ${currentQuestionIndex + 1} dari ${quizData.length}`;
+            scoreCounterEl.textContent = `Skor: ${score * 5}`; // 20 soal, max skor 100
+            
+            const progressPercent = ((currentQuestionIndex) / quizData.length) * 100;
+            progressBarEl.style.width = `${progressPercent}%`;
+
+            // Reset view
+            actionContainerEl.classList.add('hidden');
+            optionsContainerEl.innerHTML = '';
+            
+            // Apply simple fade effect for text
+            questionTextEl.classList.remove('fade-in');
+            void questionTextEl.offsetWidth; // trigger reflow
+            questionTextEl.classList.add('fade-in');
+            questionTextEl.textContent = currentQData.question;
+
+            // Generate options
+            currentQData.options.forEach((optionText, index) => {
+                const button = document.createElement('button');
+                button.className = 'w-full text-left p-4 rounded-xl border-2 border-gray-200 hover:border-emerald-500 bg-white font-medium text-gray-700 option-btn focus:outline-none';
+                button.innerHTML = `
+                    <div class="flex items-center">
+                        <span class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center mr-4 text-emerald-700 font-bold border border-gray-300">
+                            ${String.fromCharCode(65 + index)}
+                        </span>
+                        <span class="flex-1">${optionText}</span>
+                    </div>
+                `;
+                button.onclick = () => selectOption(index, button);
+                optionsContainerEl.appendChild(button);
+            });
+        }
+
+        function selectOption(selectedIndex, selectedButton) {
+            const currentQData = quizData[currentQuestionIndex];
+            const isCorrect = selectedIndex === currentQData.correct;
+            
+            // Disable all buttons
+            const allButtons = optionsContainerEl.querySelectorAll('button');
+            allButtons.forEach((btn, idx) => {
+                btn.disabled = true;
+                btn.classList.remove('hover:border-emerald-500', 'option-btn');
+                
+                // Highlight correct answer
+                if (idx === currentQData.correct) {
+                    btn.classList.remove('border-gray-200');
+                    btn.classList.add('border-green-500', 'bg-green-50');
+                    // Add checkmark
+                    btn.querySelector('.w-8').innerHTML = `<svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
+                    btn.querySelector('.w-8').classList.replace('bg-gray-100', 'bg-green-200');
+                    btn.querySelector('.w-8').classList.replace('border-gray-300', 'border-green-400');
+                }
+                
+                // Highlight incorrect user choice
+                if (idx === selectedIndex && !isCorrect) {
+                    btn.classList.remove('border-gray-200');
+                    btn.classList.add('border-red-500', 'bg-red-50');
+                    // Add X mark
+                    btn.querySelector('.w-8').innerHTML = `<svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                    btn.querySelector('.w-8').classList.replace('bg-gray-100', 'bg-red-200');
+                    btn.querySelector('.w-8').classList.replace('border-gray-300', 'border-red-400');
+                }
+            });
+
+            // Update Score & Record Answer
+            if (isCorrect) {
+                score++;
+                scoreCounterEl.textContent = `Skor: ${score * 5}`;
+                showFeedback(true);
+            } else {
+                showFeedback(false);
+            }
+
+            userAnswers.push({
+                q: currentQData.question,
+                userAns: currentQData.options[selectedIndex],
+                correctAns: currentQData.options[currentQData.correct],
+                isCorrect: isCorrect
+            });
+
+            // Show action container
+            actionContainerEl.classList.remove('hidden');
+            
+            // Change button text if last question
+            if (currentQuestionIndex === quizData.length - 1) {
+                nextBtnEl.innerHTML = 'Lihat Hasil &rarr;';
+                nextBtnEl.classList.replace('bg-blue-600', 'bg-emerald-600');
+                nextBtnEl.classList.replace('hover:bg-blue-700', 'hover:bg-emerald-700');
+            } else {
+                nextBtnEl.innerHTML = 'Selanjutnya &rarr;';
+                nextBtnEl.classList.replace('bg-emerald-600', 'bg-blue-600');
+                nextBtnEl.classList.replace('hover:bg-emerald-700', 'hover:bg-blue-700');
+            }
+        }
+
+        function showFeedback(isCorrect) {
+            if (isCorrect) {
+                feedbackMessageEl.innerHTML = `<svg class="w-6 h-6 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> <span class="text-green-600">Jawaban Benar!</span>`;
+            } else {
+                feedbackMessageEl.innerHTML = `<svg class="w-6 h-6 text-red-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> <span class="text-red-600">Jawaban Salah.</span>`;
+            }
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            
+            if (currentQuestionIndex < quizData.length) {
+                loadQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function finishQuiz() {
+            // Calculate final percentage score
+            const finalScoreVal = score * 5; 
+            
+            // Populate Result Screen
+            document.getElementById('final-score').textContent = finalScoreVal;
+            
+            const msgEl = document.getElementById('score-message');
+            const iconEl = document.getElementById('result-icon');
+            
+            if (finalScoreVal >= 80) {
+                msgEl.textContent = "Luar biasa! Anda menguasai materi Sejarah Peradaban Islam dengan sangat baik. 🌟";
+                iconEl.className = "w-20 h-20 rounded-full flex items-center justify-center mb-4 shadow-lg text-white bg-green-500";
+                iconEl.innerHTML = `<svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
+                document.getElementById('final-score').className = "text-5xl font-extrabold text-green-500 mb-2";
+            } else if (finalScoreVal >= 60) {
+                msgEl.textContent = "Cukup baik! Anda memahami sebagian besar konsep, namun masih ada ruang untuk ditingkatkan. 👍";
+                iconEl.className = "w-20 h-20 rounded-full flex items-center justify-center mb-4 shadow-lg text-white bg-yellow-500";
+                iconEl.innerHTML = `<svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"></path></svg>`;
+                document.getElementById('final-score').className = "text-5xl font-extrabold text-yellow-500 mb-2";
+            } else {
+                msgEl.textContent = "Jangan menyerah! Silakan pelajari kembali materi Bab 5 dan coba kuis ini lagi. 📖";
+                iconEl.className = "w-20 h-20 rounded-full flex items-center justify-center mb-4 shadow-lg text-white bg-red-500";
+                iconEl.innerHTML = `<svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
+                document.getElementById('final-score').className = "text-5xl font-extrabold text-red-500 mb-2";
+            }
+
+            // Build Summary
+            const summaryListEl = document.getElementById('summary-list');
+            summaryListEl.innerHTML = '';
+            userAnswers.forEach((ans, i) => {
+                const li = document.createElement('li');
+                li.className = "p-3 rounded-lg border " + (ans.isCorrect ? "bg-green-50 border-green-200" : "bg-red-50 border-red-200");
+                li.innerHTML = `
+                    <p class="font-medium text-gray-800 mb-1">${i + 1}. ${ans.q}</p>
+                    ${!ans.isCorrect ? `<p class="text-red-600 mb-1"><span class="font-semibold">Jawabanmu:</span> ${ans.userAns}</p>` : ''}
+                    <p class="text-green-600"><span class="font-semibold">Jawaban Benar:</span> ${ans.correctAns}</p>
+                `;
+                summaryListEl.appendChild(li);
+            });
+
+            transitionScreens(quizScreen, resultScreen);
+            progressBarEl.style.width = `100%`;
+        }
+
+        function resetQuiz() {
+            transitionScreens(resultScreen, startScreen);
+        }
+
+        // Helper function for smooth screen transitions
+        function transitionScreens(hideScreen, showScreen, callback) {
+            hideScreen.classList.add('fade-out');
+            
+            setTimeout(() => {
+                hideScreen.classList.add('hidden');
+                hideScreen.classList.remove('fade-out', 'fade-in');
+                
+                showScreen.classList.remove('hidden');
+                showScreen.classList.add('flex', 'fade-in'); 
+                if (showScreen.id === 'quiz-screen') {
+                   // quiz screen is not a flex-col layout originally, just block
+                   showScreen.classList.remove('flex');
+                   showScreen.classList.add('block');
+                }
+                
+                if (callback) callback();
+            }, 300);
+        }
+    </script>
+</body>
+</html>
